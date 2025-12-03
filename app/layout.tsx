@@ -7,6 +7,7 @@ import Header from "@/components/Header";
 import Script from "next/script";
 import { FB_PIXEL_ID } from "@/lib/fbpixel";
 import { FacebookPixel } from "@/components/FacebookPixel";
+import { Suspense } from "react";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -95,7 +96,9 @@ export default function RootLayout({
             src={`https://www.facebook.com/tr?id=${FB_PIXEL_ID}&ev=PageView&noscript=1`}
           />
         </noscript>
-        <FacebookPixel />
+        <Suspense fallback={null}>
+          <FacebookPixel />
+        </Suspense>
         <Announcement />
         <Header />
         <main>{children}</main>
