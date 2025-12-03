@@ -5,9 +5,6 @@ import "./globals.css";
 import Announcement from "@/components/Announcement";
 import Header from "@/components/Header";
 import Script from "next/script";
-import { FB_PIXEL_ID } from "@/lib/fbpixel";
-import { FacebookPixel } from "@/components/FacebookPixel";
-import { Suspense } from "react";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -52,6 +49,22 @@ export const metadata: Metadata = {
   },
 };
 
+const PIXEL_ID: string | undefined = process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID;
+
+const facebookPixelBaseCode: string = `
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+
+  fbq('init', '${PIXEL_ID}');
+  fbq('track', 'PageView'); 
+`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -63,42 +76,27 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${poppins.variable} ${rubik.variable}`}
     >
-      <body className="antialiased">
-        {/* ✅ Base Meta Pixel + PageView */}
-        {FB_PIXEL_ID && (
-          <Script
-            id="fb-pixel-base"
-            strategy="afterInteractive"
-            dangerouslySetInnerHTML={{
-              __html: `
-                !function(f,b,e,v,n,t,s)
-                {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-                n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-                if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-                n.queue=[];t=b.createElement(e);t.async=!0;
-                s=b.getElementsByTagName(e)[0];
-                s.parentNode.insertBefore(t,s)}(window, document,'script',
-                'https://connect.facebook.net/en_US/fbevents.js');
-                fbq('init', '${FB_PIXEL_ID}');
-                fbq('track', 'PageView');
-                console.log('[Pixel] init + PageView fired for ${FB_PIXEL_ID}');
-              `,
-            }}
-          />
-        )}
+      <head>
+        <Script
+          id="fb-pixel-base"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{ __html: facebookPixelBaseCode }}
+        />
 
-        <noscript>
-          <img
-            alt="facebook-pixel"
-            height="1"
-            width="1"
-            style={{ display: "none" }}
-            src={`https://www.facebook.com/tr?id=${FB_PIXEL_ID}&ev=PageView&noscript=1`}
-          />
-        </noscript>
-        <Suspense fallback={null}>
-          <FacebookPixel />
-        </Suspense>
+        {/* Noscript fallback */}
+        {PIXEL_ID && (
+          <noscript>
+            <img
+              height="1"
+              width="1"
+              style={{ display: "none" }}
+              src={`https://www.facebook.com/tr?id=${PIXEL_ID}&ev=PageView&noscript=1`}
+              alt="Facebook Pixel Fallback"
+            />
+          </noscript>
+        )}
+      </head>
+      <body className="antialiased">
         <Announcement />
         <Header />
         <main>{children}</main>

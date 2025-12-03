@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { ShopifyProduct, ShopifyImage } from "@/lib/shopify";
 import { ProductConfigurator } from "./ProductConfigurator";
 import { ProductGallery } from "@/components/ProductGallery";
@@ -12,6 +12,7 @@ import OralCareRoutine from "@/components/OralCareRoutine";
 import TimelineSection from "@/components/Timeline";
 import BrightabsFAQ from "@/components/Faq";
 import BrightabsTestimonials from "@/components/Testimonials";
+import { PixelCustomData, trackCustomEvent } from "@/lib/fpixel";
 
 type Step = "bundle" | "variants";
 
@@ -28,6 +29,52 @@ export function ProductPageClient({
 
   const mainImage = product.featuredImage ?? product.images[0] ?? null;
   const fallbackImage = mainImage ?? imagesForGallery[0] ?? null;
+
+  // =======================================================
+  // 1. TRACK VIEWCONTENT ON MOUNT
+  // =======================================================
+  useEffect(() => {
+    // Determine the product price and currency
+    const priceAmount = parseFloat(product.priceRange.minVariantPrice.amount);
+    const currencyCode = product.priceRange.minVariantPrice.currencyCode;
+    // Clean up Shopify Global ID (e.g., 'gid://shopify/Product/123456789' -> '123456789')
+    const contentId = product.id.split("/").pop() || product.id;
+
+    const contentData: PixelCustomData = {
+      content_name: product.title,
+      // FIX: Removed 'content_category' (product.productType) as it was causing issues.
+      content_ids: [contentId],
+      value: priceAmount,
+      currency: currencyCode,
+    };
+
+    trackCustomEvent("ViewContent", contentData);
+    console.log("Meta Pixel: ViewContent tracked on page load.");
+  }, [product]);
+
+  // =======================================================
+  // 2. DEFINE INITIATE CHECKOUT HANDLER
+  // This tracks the user clicking the button to leave for checkout.
+  // =======================================================
+  const handleInitiateCheckout = (): void => {
+    const priceAmount = parseFloat(product.priceRange.minVariantPrice.amount);
+    const currencyCode = product.priceRange.minVariantPrice.currencyCode;
+    const contentId = product.id.split("/").pop() || product.id;
+
+    const checkoutData: PixelCustomData = {
+      content_name: product.title,
+      content_ids: [contentId],
+      value: priceAmount, // Use the price of the selected variant/bundle if available
+      currency: currencyCode,
+    };
+
+    // FIRE THE PIXEL EVENT: InitiateCheckout
+    trackCustomEvent("InitiateCheckout", checkoutData);
+    console.log("Meta Pixel: InitiateCheckout tracked via prop.");
+
+    // NOTE: The actual redirect to Shopify's checkout URL must be handled
+    // inside the ProductConfigurator component right after this function is called.
+  };
 
   return (
     <>
@@ -57,7 +104,11 @@ export function ProductPageClient({
 
           {/* RIGHT SIDE: configurator */}
           <div className="w-full md:w-1/2">
-            <ProductConfigurator product={product} onStepChange={setStep} />
+            <ProductConfigurator
+              product={product}
+              onStepChange={setStep}
+              onInitiateCheckout={handleInitiateCheckout}
+            />
           </div>
         </div>
       </div>
