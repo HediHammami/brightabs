@@ -1,8 +1,12 @@
+/* eslint-disable @next/next/no-img-element */
 import type { Metadata } from "next";
 import { Poppins, Rubik } from "next/font/google";
 import "./globals.css";
 import Announcement from "@/components/Announcement";
 import Header from "@/components/Header";
+import Script from "next/script";
+import { FB_PIXEL_ID } from "@/lib/fbpixel";
+import { FacebookPixel } from "@/components/FacebookPixel";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -59,6 +63,39 @@ export default function RootLayout({
       className={`${poppins.variable} ${rubik.variable}`}
     >
       <body className="antialiased">
+        {/* ✅ Base Meta Pixel + PageView */}
+        {FB_PIXEL_ID && (
+          <Script
+            id="fb-pixel-base"
+            strategy="afterInteractive"
+            dangerouslySetInnerHTML={{
+              __html: `
+                !function(f,b,e,v,n,t,s)
+                {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+                n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+                if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+                n.queue=[];t=b.createElement(e);t.async=!0;
+                s=b.getElementsByTagName(e)[0];
+                s.parentNode.insertBefore(t,s)}(window, document,'script',
+                'https://connect.facebook.net/en_US/fbevents.js');
+                fbq('init', '${FB_PIXEL_ID}');
+                fbq('track', 'PageView');
+                console.log('[Pixel] init + PageView fired for ${FB_PIXEL_ID}');
+              `,
+            }}
+          />
+        )}
+
+        <noscript>
+          <img
+            alt="facebook-pixel"
+            height="1"
+            width="1"
+            style={{ display: "none" }}
+            src={`https://www.facebook.com/tr?id=${FB_PIXEL_ID}&ev=PageView&noscript=1`}
+          />
+        </noscript>
+        <FacebookPixel />
         <Announcement />
         <Header />
         <main>{children}</main>

@@ -1,11 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import type {
-  ShopifyProduct,
-  ShopifyProductVariant,
-  ShopifyMoneyV2,
-} from "@/lib/shopify";
+import { useEffect, useMemo, useState } from "react";
+import type { ShopifyProduct, ShopifyProductVariant } from "@/lib/shopify";
 import {
   BundleSelector,
   type BundleSelectorValue,
@@ -19,6 +15,12 @@ import TestimonialCard from "@/components/TestimonialCard";
 import { FiTruck, FiShield } from "react-icons/fi";
 import { BiArrowBack } from "react-icons/bi";
 import { IoBagCheckOutline } from "react-icons/io5";
+import {
+  trackInitiateCheckout,
+  trackViewContent,
+  type PixelEventParams,
+  type PixelContent,
+} from "@/lib/fbpixel";
 
 /* 🔹 Sticky bar at bottom of viewport */
 function StickyFlavorBar(props: { canProceed: boolean; onClick: () => void }) {
@@ -79,12 +81,17 @@ interface VariantQuantity {
   quantity: number;
 }
 
-function formatPrice(money: ShopifyMoneyV2) {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: money.currencyCode,
-  }).format(Number(money.amount));
+interface SelectedVariant {
+  variant: ShopifyProductVariant;
+  quantity: number;
 }
+
+// function formatPrice(money: ShopifyMoneyV2) {
+//   return new Intl.NumberFormat("en-US", {
+//     style: "currency",
+//     currency: money.currencyCode,
+//   }).format(Number(money.amount));
+// }
 
 function getTotalPacks(quantities: VariantQuantity[]): number {
   return quantities.reduce((sum, v) => sum + v.quantity, 0);
@@ -113,12 +120,45 @@ export function ProductConfigurator({
     [variantQuantities]
   );
 
-  const priceLabel = (() => {
-    const min = product.priceRange.minVariantPrice;
-    const max = product.priceRange.maxVariantPrice;
-    if (min.amount === max.amount) return formatPrice(min);
-    return `${formatPrice(min)} – ${formatPrice(max)}`;
-  })();
+  // 🔹 Build a list of selected variants with quantities
+  const selectedVariants = useMemo<SelectedVariant[]>(() => {
+    const result: SelectedVariant[] = [];
+
+    variantQuantities.forEach((entry) => {
+      if (entry.quantity <= 0) return;
+      const variant = variants.find((v) => v.id === entry.variantId);
+      if (!variant) return;
+
+      result.push({ variant, quantity: entry.quantity });
+    });
+
+    return result;
+  }, [variantQuantities, variants]);
+
+  // 🔹 Track ViewContent when the product page is loaded
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (typeof window.fbq !== "function") return;
+
+    const minPrice = product.priceRange.minVariantPrice;
+
+    window.fbq("track", "ViewContent", {
+      content_ids: [product.id],
+      content_name: product.title,
+      content_type: "product",
+      value: Number(minPrice.amount),
+      currency: minPrice.currencyCode,
+    });
+
+    console.log("[Pixel] ViewContent fired");
+  }, [product.id, product.title, product.priceRange.minVariantPrice]);
+
+  // const priceLabel = (() => {
+  //   const min = product.priceRange.minVariantPrice;
+  //   const max = product.priceRange.maxVariantPrice;
+  //   if (min.amount === max.amount) return formatPrice(min);
+  //   return `${formatPrice(min)} – ${formatPrice(max)}`;
+  // })();
 
   const goToVariantStep = () => {
     if (!bundleState) return;
@@ -162,18 +202,44 @@ export function ProductConfigurator({
     setIsCheckingOut(true);
     setCheckoutError(null);
 
-    const lineItems = variantQuantities
-      .filter((v) => v.quantity > 0)
-      .map((v) => ({
-        variantId: v.variantId,
-        quantity: v.quantity,
-      }));
+    // 🔹 Build lineItems for your API
+    const lineItems = selectedVariants.map((item) => ({
+      variantId: item.variant.id,
+      quantity: item.quantity,
+    }));
 
     if (!lineItems.length) {
       setCheckoutError("Please select at least one flavor.");
       setIsCheckingOut(false);
       return;
     }
+
+    // 🔹 Compute value & pixel payload for InitiateCheckout
+    const currency =
+      selectedVariants[0]?.variant.price.currencyCode ??
+      product.priceRange.minVariantPrice.currencyCode;
+
+    const totalValue = selectedVariants.reduce<number>(
+      (sum, item) => sum + Number(item.variant.price.amount) * item.quantity,
+      0
+    );
+
+    const contents: PixelContent[] = selectedVariants.map((item) => ({
+      id: item.variant.id,
+      quantity: item.quantity,
+      item_price: Number(item.variant.price.amount),
+    }));
+
+    const pixelParams: PixelEventParams = {
+      value: totalValue,
+      currency,
+      content_type: "product",
+      content_ids: selectedVariants.map((item) => item.variant.id),
+      contents,
+    };
+
+    // 🔹 Fire InitiateCheckout before redirect
+    trackInitiateCheckout(pixelParams);
 
     try {
       const res = await fetch("/api/checkout", {
@@ -183,11 +249,14 @@ export function ProductConfigurator({
       });
 
       if (!res.ok) {
-        const data = await res.json().catch(() => null);
-        throw new Error(data?.error || "Checkout failed");
+        const data: { error?: string } | null = await res
+          .json()
+          .catch(() => null);
+        const message = data?.error ?? "Checkout failed";
+        throw new Error(message);
       }
 
-      const data = await res.json();
+      const data: { url?: string } = await res.json();
 
       if (!data?.url) {
         throw new Error("No checkout URL returned");
@@ -195,10 +264,13 @@ export function ProductConfigurator({
 
       // ✅ Redirect to Shopify checkout
       window.location.href = data.url;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
-      setCheckoutError(err.message || "Something went wrong during checkout");
+      const message =
+        err instanceof Error
+          ? err.message
+          : "Something went wrong during checkout";
+      setCheckoutError(message);
       setIsCheckingOut(false);
     }
   };
