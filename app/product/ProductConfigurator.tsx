@@ -18,7 +18,6 @@ import BenefitsBlock from "@/components/BenefitsBlock";
 import TestimonialCard from "@/components/TestimonialCard";
 import { FiTruck, FiShield } from "react-icons/fi";
 import { BiArrowBack } from "react-icons/bi";
-import { CgShoppingCart } from "react-icons/cg";
 import { IoBagCheckOutline } from "react-icons/io5";
 
 /* 🔹 Sticky bar at bottom of viewport */
@@ -471,7 +470,7 @@ export function ProductConfigurator({
               {isCheckingOut
                 ? "Redirecting to checkout..."
                 : "Continue to checkout"}
-                <IoBagCheckOutline className="w-4 h-4 text-white" />
+              <IoBagCheckOutline className="w-4 h-4 text-white" />
             </button>
           </div>
         )}
