@@ -30,12 +30,12 @@ export const ingredients = [
 ];
 
 export const highlights = [
-  { img: "/images/1.png", title: "All-Natural Ingredients" },
-  { img: "/images/2.png", title: "No Artificial Additives" },
-  { img: "/images/3.png", title: "Cleans & Protects Teeth" },
-  { img: "/images/4.png", title: "Supports Oral pH Balance" },
-  { img: "/images/5.png", title: "Functional Tablet Format" },
-  { img: "/images/6.png", title: "Refreshing Mint Flavor" },
+  { img: "/images/highlights/2.png", title: "All-Natural Ingredients" },
+  { img: "/images/highlights/3.png", title: "No Artificial Additives" },
+  { img: "/images/highlights/5.png", title: "Cleans & Protects Teeth" },
+  { img: "/images/highlights/1.png", title: "Supports Oral pH Balance" },
+  { img: "/images/highlights/6.png", title: "Functional Tablet Format" },
+  { img: "/images/highlights/4.png", title: "Refreshing Mint Flavor" },
 ];
 
 export const CarouselIngredients = [
@@ -94,12 +94,12 @@ export const CarouselIngredients = [
 ];
 
 export const badges = [
-  { icon: "/images/badges/1.png", text: "ALL-NATURAL INGREDIENTS" },
-  { icon: "/images/badges/2.png", text: "CRUELTY-FREE" },
-  { icon: "/images/badges/3.png", text: "NO ADDED SUGARS" },
-  { icon: "/images/badges/4.png", text: "THIRD-PARTY TESTED" },
-  { icon: "/images/badges/5.png", text: "ONLY SAFE CHEMICALS" },
-  { icon: "/images/badges/6.png", text: "WHITENS TEETH" },
+  { icon: "/images/badges/4.png", text: "100% NATURAL INGREDIENTSS" },
+  { icon: "/images/badges/5.png", text: "CRUELTY-FREE" },
+  { icon: "/images/badges/2.png", text: "NO ADDED SUGARS" },
+  { icon: "/images/badges/3.png", text: "THIRD-PARTY TESTED" },
+  { icon: "/images/badges/6.png", text: "ONO HARSH CHEMICALS" },
+  { icon: "/images/badges/1.png", text: "WHITENS TEETH" },
 ];
 
 export const FAQ_DATA: FAQItem[] = [

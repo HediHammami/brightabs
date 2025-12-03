@@ -119,7 +119,7 @@ export function ProductGallery({
               <img
                 src={image.url}
                 alt={image.altText ?? productTitle}
-                className="aspect-square w-full object-cover"
+                className="aspect-square h-full w-full object-cover"
               />
             </div>
           ))}

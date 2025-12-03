@@ -34,7 +34,7 @@ export function ProductPageClient({
       <div className="bg-[linear-gradient(180deg,rgba(50,153,158,0.1)_0%,rgba(50,153,158,0)_100%)]">
         <div className="mx-auto flex max-w-7xl flex-col gap-10 px-4 py-10 md:flex-row">
           {/* LEFT SIDE */}
-          <div className="w-full md:w-1/2">
+          <div className="w-full md:w-1/2 md:sticky md:top-24 md:self-start">
             {step === "bundle" ? (
               <ProductGallery
                 images={imagesForGallery}

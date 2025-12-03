@@ -1,5 +1,6 @@
 import Image from "next/image";
 import React, { JSX } from "react";
+import { HiOutlineSparkles } from "react-icons/hi";
 
 interface BenefitItem {
   icon: string;
@@ -60,14 +61,14 @@ export default function BenefitsBlock(): JSX.Element {
             VISIBLE RESULTS IN 4 WEEKS
           </p>
           {/* Sparkles icon placeholder */}
-          <span className="ml-2 text-xl text-teal-500">✨</span>
+          <HiOutlineSparkles className="w-4 h-4 text-[#32999E]" />
         </div>
 
         {/* Bottom Separator Line */}
-        <div className="border-t border-[#32999E] pb-8"></div>
+        <div className="border-t border-[#32999E]"></div>
 
         {/* Benefits Grid */}
-        <div className="grid grid-cols-3 divide-x divide-gray-200">
+        <div className="grid grid-cols-3 divide-x divide-gray-200 mt-3">
           {BENEFITS_DATA.map((item, index) => (
             <BenefitColumn key={index} icon={item.icon} title={item.title} />
           ))}
