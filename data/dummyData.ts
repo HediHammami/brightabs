@@ -118,26 +118,26 @@ export const FAQ_DATA: FAQItem[] = [
     question:
       "Are BRIGHTABS truly easy to use and convenient? Do they require special care?",
     answer:
-      "– perfectly portioned. Just bite down a tablet and brush with a wet toothbrush as you would with a regular toothpaste. No mess, no product waste, no plastic waste. – stored in small compostable pouches, making them space-saving and ready for on-the-go. They are convenient for use in the home, the office, the plane, or the gym. Order your refills by subscription and you and your family are all set! Just make sure TANITABS are always stored tightly sealed to keep freshness in and moisture out.",
+      "– perfectly portioned. Just bite down a tablet and brush with a wet toothbrush as you would with a regular toothpaste. No mess, no product waste, no plastic waste. – stored in small compostable pouches, making them space-saving and ready for on-the-go. They are convenient for use in the home, the office, the plane, or the gym. Order your refills by subscription and you and your family are all set! Just make sure BRIGHTABS are always stored tightly sealed to keep freshness in and moisture out.",
   },
   {
     id: 3,
     question: "Are BRIGHTABS recommended for my sensitive teeth?",
     answer:
-      "YES! All our TANITABS toothpaste tablets have an Abrasive index (RDA) under 70, meaning they are harmless for sensitive teeth. Plus, they contain HAp (micro-hydroxyapatite), a mineral form that helps reduce teeth sensitivity with extremely low abrasively. FACT: A study found that brushing with a HAp-based toothpaste improved tooth sensitivity equal to a fluoride toothpaste after as little as 2 weeks. You can check out our Reference pages for more scientific studies about HAp!",
+      "YES! All our BRIGHTABS toothpaste tablets have an Abrasive index (RDA) under 70, meaning they are harmless for sensitive teeth. Plus, they contain HAp (micro-hydroxyapatite), a mineral form that helps reduce teeth sensitivity with extremely low abrasively. FACT: A study found that brushing with a HAp-based toothpaste improved tooth sensitivity equal to a fluoride toothpaste after as little as 2 weeks. You can check out our Reference pages for more scientific studies about HAp!",
   },
   {
     id: 4,
     question:
       "Are BRIGHTABS as good for my health and my teeth as regular toothpaste?",
     answer:
-      "ABSOLUTELY! When setting out to develop our TANITABS tablets, we carefully selected high-quality ingredients from nature that are scientifically proven to be effective and safe for human health. Plus, our tablets are sustainably sourced and carefully formulated to our highest standards — in our own laboratory. Check out our References page to find scientific studies that have tested the effectiveness of HAp and xylitol, two key ingredients in our oral care tablets. Also know that we use higher percentages than the industry standard [10% HAp and 25% xylitol] to offer your greater protection, and that our xylitol is organic.",
+      "ABSOLUTELY! When setting out to develop our BRIGHTABS tablets, we carefully selected high-quality ingredients from nature that are scientifically proven to be effective and safe for human health. Plus, our tablets are sustainably sourced and carefully formulated to our highest standards — in our own laboratory. Check out our References page to find scientific studies that have tested the effectiveness of HAp and xylitol, two key ingredients in our oral care tablets. Also know that we use higher percentages than the industry standard [10% HAp and 25% xylitol] to offer your greater protection, and that our xylitol is organic.",
   },
   {
     id: 5,
     question: "Are BRIGHTABS safe for kids? Are BRIGHTABS safe for pets?",
     answer:
-      "KIDS: For children under 3 years old, we recommend crushing a TANITABS tablet into a powder first to avoid choking hazards. Help them dip their wet toothbrush bristles into the powder and foam up for a deep clean, knowing our formula is 100% safe if accidentally swallowed. PETS: NO, TANITABS tablets are not safe for pets! They contain xylitol, which is good for our mouths but highly toxic to dogs and cats. Make sure to keep TANITABS tablets out of the reach of your pets to keep them safe.",
+      "KIDS: For children under 3 years old, we recommend crushing a BRIGHTABS tablet into a powder first to avoid choking hazards. Help them dip their wet toothbrush bristles into the powder and foam up for a deep clean, knowing our formula is 100% safe if accidentally swallowed. PETS: NO, BRIGHTABS tablets are not safe for pets! They contain xylitol, which is good for our mouths but highly toxic to dogs and cats. Make sure to keep BRIGHTABS tablets out of the reach of your pets to keep them safe.",
   },
   {
     id: 6,

@@ -19,7 +19,7 @@ const TIMELINE_DATA: TimelineItemData[] = [
     title: "THE CLEAN START",
     details: [
       "Your mouth starts adjusting to clean, natural ingredients, free from harsh chemicals and artificial foaming agents.",
-      "You’ll notice a consistently fresh, clean feeling after each brush.",
+      "You'll notice a consistently fresh, clean feeling after each brush.",
       "Early signs of reduced plaque buildup and less gum irritation.",
     ],
   },
@@ -97,7 +97,7 @@ const TimelineItem: React.FC<TimelineItemProps> = ({
 
 export default function BrightabsTimeline(): JSX.Element {
   return (
-    <div className="py-16 md:py-24 bg-white font-sans">
+    <div className="py-16 md:py-24">
       <div className="max-w-4xl mx-auto text-center px-4 mb-12 md:mb-16">
         <h1 className="text-2xl md:text-3xl font-semibold text-[#101828] leading-tight mb-2">
           What To Expect With Consistent Use of BRIGHTABS
@@ -127,25 +127,30 @@ export default function BrightabsTimeline(): JSX.Element {
             ))}
           </div>
 
-          {/* Right Column: Image/Video */}
-          <div className="w-full">
-            <div className="overflow-hidden rounded-xl shadow-2xl aspect-square md:aspect-4/5 bg-gray-100">
-              <Image
-                src="/images/gifs/timeline-gif.gif"
-                alt="A woman using Brightabs toothpaste tablets, illustrating the product experience."
-                className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                width={440}
-                height={440}
-                unoptimized={true}
-                onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-                  (e.target as HTMLImageElement).onerror = null;
-                  (e.target as HTMLImageElement).src =
-                    "/images/gifs/timeline-gif.gif";
-                }}
-              />
+          {/* Right Column: Image/Video - Made sticky */}
+          <div className="flex flex-col">
+            <div className="md:sticky md:top-12 self-start w-full">
+              <div className="overflow-hidden rounded-xl shadow-2xl aspect-square md:aspect-4/5 bg-gray-100">
+                <Image
+                  src="/images/gifs/timeline-gif.gif"
+                  alt="A woman using Brightabs toothpaste tablets, illustrating the product experience."
+                  className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                  width={440}
+                  height={440}
+                  unoptimized={true}
+                  onError={(
+                    e: React.SyntheticEvent<HTMLImageElement, Event>
+                  ) => {
+                    (e.target as HTMLImageElement).onerror = null;
+                    (e.target as HTMLImageElement).src =
+                      "/images/gifs/timeline-gif.gif";
+                  }}
+                />
+              </div>
             </div>
           </div>
         </div>
+        <div className="hidden md:h-40"></div>
       </div>
     </div>
   );

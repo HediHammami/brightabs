@@ -74,7 +74,7 @@ export default function TaniTabsProduct() {
         {activeTab === "isItForMe" && (
           <div>
             <p className="text-gray-600 mb-6">
-              TANITABS are designed for anyone who wants to improve their oral
+              BRIGHTABS are designed for anyone who wants to improve their oral
               health without compromise.
             </p>
 

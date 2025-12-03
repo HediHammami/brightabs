@@ -17,6 +17,9 @@ import ProductTabs from "@/components/ProductTabs";
 import BenefitsBlock from "@/components/BenefitsBlock";
 import TestimonialCard from "@/components/TestimonialCard";
 import { FiTruck, FiShield } from "react-icons/fi";
+import { BiArrowBack } from "react-icons/bi";
+import { CgShoppingCart } from "react-icons/cg";
+import { IoBagCheckOutline } from "react-icons/io5";
 
 /* 🔹 Sticky bar at bottom of viewport */
 function StickyFlavorBar(props: { canProceed: boolean; onClick: () => void }) {
@@ -206,7 +209,7 @@ export function ProductConfigurator({
       <div className="space-y-8">
         {/* Top bar / navbar when in variants step */}
         {step === "variants" && (
-          <div className="flex items-center justify-between rounded-lg bg-gray-900 px-4 py-3 text-xs text-white">
+          <div className="flex items-center justify-between rounded-md bg-[#32999E] px-4 py-3 text-xs text-white">
             <button
               type="button"
               onClick={() => {
@@ -215,7 +218,9 @@ export function ProductConfigurator({
               }}
               className="flex items-center gap-1 text-[11px] font-semibold uppercase tracking-wide hover:text-gray-200"
             >
-              <span className="text-sm">←</span>
+              <span className="w-8 h-8 flex items-center justify-center rounded-full bg-white">
+                <BiArrowBack className="w-4 h-4 text-black" />
+              </span>
               <span>Back to bundles</span>
             </button>
             <span className="text-[11px] font-semibold uppercase tracking-wide">
@@ -267,19 +272,19 @@ export function ProductConfigurator({
         {step === "variants" && (
           <div className="space-y-8">
             {/* Summary of total packs */}
-            <div className="rounded-lg bg-gray-50 px-4 py-3 text-xs text-gray-700">
+            <div className="rounded-lg bg-gray-50 px-4 py-3 text-xs text-black">
               <div className="flex items-center justify-between">
                 <span className="font-semibold uppercase tracking-wide">
                   Total packs selected
                 </span>
-                <span className="text-base font-semibold">
+                <span className="text-sm font-semibold">
                   {totalPacks} pack{totalPacks !== 1 ? "s" : ""}
                 </span>
               </div>
               {bundleState && (
-                <p className="mt-1 text-[11px] text-gray-500">
+                <p className="mt-1 text-xs text-black">
                   You started with{" "}
-                  <span className="font-semibold">
+                  <span className="font-semibold uppercase">
                     {bundleState.bundle.packs} pack
                     {bundleState.bundle.packs !== 1 ? "s" : ""}
                   </span>{" "}
@@ -343,16 +348,16 @@ export function ProductConfigurator({
                         <button
                           type="button"
                           onClick={() => handleQuantityChange(variant.id, 1)}
-                          className="rounded-md border border-black px-4 py-2 text-xs font-semibold uppercase tracking-wide text-black transition hover:bg-black hover:text-white"
+                          className="bg-[#2e4c3c] rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white transition hover:bg-[#2D5B5D] hover:text-white"
                         >
                           Add +
                         </button>
                       ) : (
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1">
                           <button
                             type="button"
                             onClick={() => handleQuantityChange(variant.id, -1)}
-                            className="flex h-8 w-8 items-center justify-center rounded-md border border-gray-300 text-sm font-semibold hover:border-black"
+                            className="bg-[#2e4c3c] flex h-8 w-8 items-center justify-center rounded-full text-white text-sm font-semibold hover:bg-[#2D5B5D]"
                           >
                             -
                           </button>
@@ -362,7 +367,7 @@ export function ProductConfigurator({
                           <button
                             type="button"
                             onClick={() => handleQuantityChange(variant.id, 1)}
-                            className="flex h-8 w-8 items-center justify-center rounded-md border border-black text-sm font-semibold hover:bg-black hover:text-white"
+                            className="bg-[#2e4c3c] flex h-8 w-8 items-center justify-center rounded-full text-white text-sm font-semibold hover:bg-[#2D5B5D]"
                           >
                             +
                           </button>
@@ -376,12 +381,12 @@ export function ProductConfigurator({
 
             {/* Gifts based on total packs */}
             <div className="space-y-3">
-              <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-600">
+              <h2 className="text-sm font-semibold uppercase tracking-wide text-black">
                 Your free gifts
               </h2>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-black mb-6">
                 Based on{" "}
-                <span className="font-semibold">
+                <span className="font-semibold uppercase">
                   {totalPacks} pack{totalPacks !== 1 ? "s" : ""}
                 </span>
                 , you unlock:
@@ -460,12 +465,13 @@ export function ProductConfigurator({
             <button
               type="button"
               onClick={handleCheckout}
-              className="mt-4 w-full rounded-md bg-black px-4 py-3 text-sm font-semibold text-white transition hover:bg-gray-900 disabled:bg-gray-400 disabled:cursor-not-allowed"
+              className="flex items-center justify-center gap-2 mt-2 w-full rounded-full bg-[#32999E] px-4 py-4 text-sm font-semibold text-white transition hover:bg-[#2D5B5D] disabled:bg-gray-400 disabled:cursor-not-allowed"
               disabled={totalPacks === 0 || isCheckingOut}
             >
               {isCheckingOut
                 ? "Redirecting to checkout..."
                 : "Continue to checkout"}
+                <IoBagCheckOutline className="w-4 h-4 text-white" />
             </button>
           </div>
         )}

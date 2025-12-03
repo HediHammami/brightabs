@@ -74,7 +74,7 @@ export default function ConsumerStudyResults() {
         {/* Right Side - Before/After Image */}
         <div className="relative">
           <Image
-            src="/images/before-and-after.png"
+            src="/images/before-vs-after.png"
             alt="Visibly Brightens Teeth In 30 Days - Before and After Results"
             className="w-full h-full object-contain rounded-lg"
             width={440}

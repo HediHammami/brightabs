@@ -37,19 +37,21 @@ export default function HowItWorks() {
       <div className="max-w-7xl mx-auto">
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
           {/* Left side - Video */}
-          <div className="relative rounded-lg overflow-hidden shadow-lg">
-            <video
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="w-full h-full object-cover aspect-4/3"
-            >
-              <source src="/videos/how-it-works.mp4" type="video/mp4" />
-              {/* Fallback gradient for demo */}
-            </video>
-            {/* Fallback gradient overlay for demo purposes */}
-            <div className="absolute inset-0 bg-linear-to-br from-pink-200 via-yellow-100 to-blue-200 -z-10"></div>
+          <div className="lg:sticky lg:top-12 w-full">
+            <div className="relative rounded-lg overflow-hidden shadow-lg">
+              <video
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-full object-cover aspect-4/3"
+              >
+                <source src="/videos/how-it-works.mp4" type="video/mp4" />
+                {/* Fallback gradient for demo */}
+              </video>
+              {/* Fallback gradient overlay for demo purposes */}
+              <div className="absolute inset-0 bg-linear-to-br from-pink-200 via-yellow-100 to-blue-200 -z-10"></div>
+            </div>
           </div>
 
           {/* Right side - Content */}
