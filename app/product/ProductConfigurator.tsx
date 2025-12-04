@@ -350,7 +350,7 @@ export function ProductConfigurator({
         {/* STEP 2: VARIANTS */}
         {step === "variants" && (
           <div className="space-y-8">
-            <div className="rounded-lg bg-gray-50 px-4 py-3 text-xs text-black">
+            <div className="hidden md:block rounded-lg bg-gray-50 px-4 py-3 text-xs text-black">
               <div className="flex items-center justify-between">
                 <span className="font-semibold uppercase tracking-wide">
                   Total packs selected
