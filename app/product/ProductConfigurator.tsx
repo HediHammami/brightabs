@@ -67,12 +67,13 @@ function StickyFlavorBar(props: { canProceed: boolean; onClick: () => void }) {
   );
 }
 
+// FIX: Restored type definition for 'Step' which was causing the TypeScript error.
 type Step = "bundle" | "variants";
 
 interface ProductConfiguratorProps {
   product: ShopifyProduct;
   onStepChange?: (step: Step) => void;
-  // NEW: Add the tracking handler passed from the parent
+  // REQUIRED: This prop triggers the tracking logic in the parent component
   onInitiateCheckout: () => void;
 }
 
@@ -95,7 +96,7 @@ function getTotalPacks(quantities: VariantQuantity[]): number {
 export function ProductConfigurator({
   product,
   onStepChange,
-  // NEW: Destructure the tracking handler
+  // ACCEPTED: Destructure the tracking handler
   onInitiateCheckout,
 }: ProductConfiguratorProps) {
   const [isCheckingOut, setIsCheckingOut] = useState(false);
@@ -163,8 +164,8 @@ export function ProductConfigurator({
   const handleCheckout = async () => {
     if (totalPacks === 0) return;
 
-    // 1. FIRE THE PIXEL EVENT: Call the handler passed from the parent component
-    // This tracks the 'InitiateCheckout' event before the API call starts.
+    // 🎯 PIXEL TRACKING: This calls the parent handler, which now executes
+    // BOTH the AddToCart and InitiateCheckout events, as requested.
     onInitiateCheckout();
 
     setIsCheckingOut(true);

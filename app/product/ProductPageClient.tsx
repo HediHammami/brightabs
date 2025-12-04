@@ -37,12 +37,10 @@ export function ProductPageClient({
     // Determine the product price and currency
     const priceAmount = parseFloat(product.priceRange.minVariantPrice.amount);
     const currencyCode = product.priceRange.minVariantPrice.currencyCode;
-    // Clean up Shopify Global ID (e.g., 'gid://shopify/Product/123456789' -> '123456789')
     const contentId = product.id.split("/").pop() || product.id;
 
     const contentData: PixelCustomData = {
       content_name: product.title,
-      // FIX: Removed 'content_category' (product.productType) as it was causing issues.
       content_ids: [contentId],
       value: priceAmount,
       currency: currencyCode,
@@ -64,16 +62,13 @@ export function ProductPageClient({
     const checkoutData: PixelCustomData = {
       content_name: product.title,
       content_ids: [contentId],
-      value: priceAmount, // Use the price of the selected variant/bundle if available
+      value: priceAmount,
       currency: currencyCode,
     };
 
-    // FIRE THE PIXEL EVENT: InitiateCheckout
+    trackCustomEvent("AddToCart", checkoutData);
     trackCustomEvent("InitiateCheckout", checkoutData);
-    console.log("Meta Pixel: InitiateCheckout tracked via prop.");
-
-    // NOTE: The actual redirect to Shopify's checkout URL must be handled
-    // inside the ProductConfigurator component right after this function is called.
+    console.log("Meta Pixel: AddToCart and InitiateCheckout tracked.");
   };
 
   return (
