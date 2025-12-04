@@ -288,10 +288,10 @@ export function ProductConfigurator({
 
   return (
     <>
-      <div className="space-y-8">
+      <div className="space-y-4">
         {/* Top bar / navbar when in variants step */}
         {step === "variants" && (
-          <div className="flex items-center justify-between rounded-md bg-[#32999E] px-4 py-3 text-xs text-white">
+          <div className="flex items-center justify-between rounded-md bg-[#32999E] px-4 py-2 text-xs text-white">
             <button
               type="button"
               onClick={() => {
