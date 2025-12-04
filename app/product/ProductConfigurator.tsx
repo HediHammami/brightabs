@@ -160,7 +160,7 @@ function getTotalPacks(quantities: VariantQuantity[]): number {
 const VARIANT_DESCRIPTIONS: Record<string, string> = {
   "Fresh Mint": "Clean, refreshing mint",
   "Charcoal + Fresh Mint": "Charcoal-powered stain removal",
-  "Strawberry": "Naturally fruity & kid-approved",
+  Strawberry: "Naturally fruity & kid-approved",
   // add more titles exactly matching your Shopify variant titles
 };
 
@@ -253,18 +253,32 @@ export function ProductConfigurator({
     setIsCheckingOut(true);
     setCheckoutError(null);
 
-    const lineItems = variantQuantities
+    // 1) Paid packs (user-selected variants)
+    const packLineItems = variantQuantities
       .filter((v) => v.quantity > 0)
       .map((v) => ({
         variantId: v.variantId,
         quantity: v.quantity,
       }));
 
-    if (!lineItems.length) {
+    if (!packLineItems.length) {
       setCheckoutError("Please select at least one flavor.");
       setIsCheckingOut(false);
       return;
     }
+
+    // 2) Unlocked gifts based on totalPacks
+    const unlockedGiftOptions = GIFT_OPTIONS.filter(
+      (gift) => totalPacks >= gift.unlockAtPacks && !!gift.variantId
+    );
+
+    const giftLineItems = unlockedGiftOptions.map((gift) => ({
+      variantId: gift.variantId,
+      quantity: 1,
+    }));
+
+    // 3) Final line items: packs + gifts
+    const lineItems = [...packLineItems, ...giftLineItems];
 
     try {
       const res = await fetch("/api/checkout", {

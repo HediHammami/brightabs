@@ -21,6 +21,7 @@ export interface GiftOption {
   imageUrl: string;
   unlockAtPacks: BundleSize;
   badgeLabel?: string;
+  variantId: string;
 }
 
 export interface BundleSelectorValue {
@@ -73,6 +74,7 @@ export const GIFT_OPTIONS: GiftOption[] = [
     imageUrl: "/images/gifts/free_shipping.webp",
     unlockAtPacks: 1,
     badgeLabel: "$9.99",
+    variantId: "",
   },
   {
     id: "gift-2",
@@ -80,6 +82,7 @@ export const GIFT_OPTIONS: GiftOption[] = [
     imageUrl: "/images/gifts/revolubar.webp",
     unlockAtPacks: 2,
     badgeLabel: "$12.00",
+    variantId: "gid://shopify/ProductVariant/42774144450673",
   },
   {
     id: "gift-3",
@@ -87,6 +90,7 @@ export const GIFT_OPTIONS: GiftOption[] = [
     imageUrl: "/images/gifts/brightabs.webp",
     unlockAtPacks: 3,
     badgeLabel: "$21.00",
+    variantId: "gid://shopify/ProductVariant/42774144614513",
   },
   {
     id: "gift-4",
@@ -94,6 +98,7 @@ export const GIFT_OPTIONS: GiftOption[] = [
     imageUrl: "/images/gifts/free_gift.webp",
     unlockAtPacks: 4,
     badgeLabel: "$40.00",
+    variantId: "gid://shopify/ProductVariant/42825886531697",
   },
 ];
 
