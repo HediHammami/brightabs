@@ -20,13 +20,13 @@ const rubik = Rubik({
 
 export const metadata: Metadata = {
   title:
-    "BRIGHTTABS – Remineralizing Toothpaste Tablets | Natural Enamel Restoration",
+    "BRIGHTABS – Remineralizing Toothpaste Tablets | Natural Enamel Restoration",
   description:
-    "BRIGHTTABS remineralizing toothpaste tablets restore enamel & clean teeth with natural, dentist-trusted ingredients. Support gum health & strengthen enamel naturally.",
+    "BRIGHTABS remineralizing toothpaste tablets restore enamel & clean teeth with natural, dentist-trusted ingredients. Support gum health & strengthen enamel naturally.",
   keywords:
     "remineralizing toothpaste, enamel restoration, natural toothpaste tablets, gum health, dentist-approved",
   openGraph: {
-    title: "BRIGHTTABS – Remineralizing Toothpaste Tablets",
+    title: "BRIGHTABS – Remineralizing Toothpaste Tablets",
     description:
       "Restore enamel, clean teeth, and support gums with natural, dentist-trusted ingredients.",
     type: "website",
@@ -36,13 +36,13 @@ export const metadata: Metadata = {
         url: "/images/brightaps.webp",
         width: 1200,
         height: 630,
-        alt: "BRIGHTTABS Remineralizing Toothpaste Tablets",
+        alt: "BRIGHTABS Remineralizing Toothpaste Tablets",
       },
     ],
-    siteName: "BRIGHTTABS",
+    siteName: "BRIGHTABS",
   },
   other: {
-    "product:brand": "BRIGHTTABS",
+    "product:brand": "BRIGHTABS",
     "product:category": "Oral Care",
     "og:price:currency": "USD",
     "og:availability": "in_stock",
