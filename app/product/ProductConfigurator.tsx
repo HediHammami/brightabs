@@ -157,6 +157,13 @@ function getTotalPacks(quantities: VariantQuantity[]): number {
   return quantities.reduce((sum, v) => sum + v.quantity, 0);
 }
 
+const VARIANT_DESCRIPTIONS: Record<string, string> = {
+  "Fresh Mint": "Clean, refreshing mint",
+  "Charcoal + Fresh Mint": "Charcoal-powered stain removal",
+  "Strawberry": "Naturally fruity & kid-approved",
+  // add more titles exactly matching your Shopify variant titles
+};
+
 export function ProductConfigurator({
   product,
   onStepChange,
@@ -390,7 +397,8 @@ export function ProductConfigurator({
                   product.featuredImage?.url ||
                   product.images[0]?.url ||
                   "/images/flavors/default.png";
-
+                const variantDescription =
+                  VARIANT_DESCRIPTIONS[variant.title] ?? "";
                 return (
                   <div
                     key={variant.id}
@@ -415,10 +423,11 @@ export function ProductConfigurator({
                         <span className="text-sm font-semibold">
                           {variant.title}
                         </span>
-                        <span className="mt-1 text-xs text-gray-500">
-                          {variant.price.amount} {variant.price.currencyCode} /
-                          pack
-                        </span>
+                        {variantDescription && (
+                          <span className="mt-1 text-[10px] text-black">
+                            {variantDescription}
+                          </span>
+                        )}
                       </div>
                     </div>
 
