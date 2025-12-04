@@ -1,4 +1,4 @@
-// "use client"; // Already present
+// "use client";
 
 import { useMemo, useState } from "react";
 import type {
@@ -20,7 +20,7 @@ import { FiTruck, FiShield } from "react-icons/fi";
 import { BiArrowBack } from "react-icons/bi";
 import { IoBagCheckOutline } from "react-icons/io5";
 
-/* 🔹 Sticky bar at bottom of viewport */
+/* 🔹 Sticky bar at bottom of viewport for STEP 1 (Bundles) */
 function StickyFlavorBar(props: { canProceed: boolean; onClick: () => void }) {
   const { canProceed, onClick } = props;
 
@@ -36,9 +36,7 @@ function StickyFlavorBar(props: { canProceed: boolean; onClick: () => void }) {
     <div className="fixed inset-x-0 bottom-0 z-30 border-t border-[#50000B1F] bg-[linear-gradient(93.54deg,rgba(224,240,255,0.95)_0%,rgba(255,255,255,0.98)_100%)]">
       <div className="mx-auto max-w-5xl px-4 py-3">
         <div className="flex justify-center">
-          {/* Wrapper that controls width for both button + benefits */}
           <div className="w-full max-w-2xl">
-            {/* Centered button */}
             <button
               type="button"
               onClick={handleClick}
@@ -49,8 +47,7 @@ function StickyFlavorBar(props: { canProceed: boolean; onClick: () => void }) {
               <BsArrowRight className="h-4 w-4 text-white" />
             </button>
 
-            {/* Benefits row – same width as button */}
-            <div className="mt-2 flex items-center justify-between text-xs text-black font-semibold">
+            <div className="mt-2 flex items-center justify-between text-xs font-semibold text-black">
               <div className="flex items-center gap-1">
                 <FiShield className="h-4 w-4" />
                 <span>100% Money Back Guarantee</span>
@@ -67,13 +64,80 @@ function StickyFlavorBar(props: { canProceed: boolean; onClick: () => void }) {
   );
 }
 
-// FIX: Restored type definition for 'Step' which was causing the TypeScript error.
+/* 🔹 Sticky checkout bar for STEP 2 (Variants / flavors) */
+interface StickyCheckoutBarProps {
+  requiredPacks: number;
+  totalPacks: number;
+  isCheckingOut: boolean;
+  onCheckout: () => void;
+}
+
+function StickyCheckoutBar({
+  requiredPacks,
+  totalPacks,
+  isCheckingOut,
+  onCheckout,
+}: StickyCheckoutBarProps) {
+  const remainingPacks =
+    requiredPacks > 0 ? Math.max(requiredPacks - totalPacks, 0) : 0;
+
+  const canCheckout =
+    requiredPacks > 0 &&
+    totalPacks >= requiredPacks &&
+    totalPacks > 0 &&
+    !isCheckingOut;
+
+  let buttonLabel: string;
+
+  if (requiredPacks === 0) {
+    buttonLabel = "Select a bundle to unlock checkout";
+  } else if (remainingPacks > 0) {
+    buttonLabel = `Select ${remainingPacks} more pack${
+      remainingPacks > 1 ? "s" : ""
+    } to checkout`;
+  } else {
+    buttonLabel = isCheckingOut ? "Redirecting..." : "Continue to checkout";
+  }
+
+  return (
+    <div className="fixed inset-x-0 bottom-0 z-30 border-t border-[#50000B1F] bg-[linear-gradient(93.54deg,rgba(224,240,255,0.95)_0%,rgba(255,255,255,0.98)_100%)]">
+      <div className="mx-auto max-w-5xl px-4 py-3">
+        <div className="flex justify-center">
+          <div className="w-full max-w-2xl">
+            {/* Button with dynamic helper text INSIDE */}
+            <button
+              type="button"
+              onClick={onCheckout}
+              disabled={!canCheckout}
+              className="flex w-full items-center justify-center gap-2 rounded-full bg-[#32999E] px-4 py-3 text-xs md:text-sm font-semibold capitalize tracking-wide text-white transition disabled:cursor-not-allowed disabled:bg-gray-400 text-center"
+            >
+              <IoBagCheckOutline className="h-4 w-4 text-white" />
+              <span className="leading-snug">{buttonLabel}</span>
+            </button>
+
+            {/* Benefits row – same width as button */}
+            <div className="mt-2 flex items-center justify-between text-[11px] font-semibold text-black">
+              <div className="flex items-center gap-1">
+                <FiTruck className="h-4 w-4" />
+                <span>Free Shipping</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <FiShield className="h-4 w-4" />
+                <span>100% Money Back Guarantee</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 type Step = "bundle" | "variants";
 
 interface ProductConfiguratorProps {
   product: ShopifyProduct;
   onStepChange?: (step: Step) => void;
-  // REQUIRED: This prop triggers the tracking logic in the parent component
   onInitiateCheckout: () => void;
 }
 
@@ -96,7 +160,6 @@ function getTotalPacks(quantities: VariantQuantity[]): number {
 export function ProductConfigurator({
   product,
   onStepChange,
-  // ACCEPTED: Destructure the tracking handler
   onInitiateCheckout,
 }: ProductConfiguratorProps) {
   const [isCheckingOut, setIsCheckingOut] = useState(false);
@@ -118,25 +181,26 @@ export function ProductConfigurator({
     [variantQuantities]
   );
 
-  const priceLabel = (() => {
+  // priceLabel is ready if you ever need it, but currently unused.
+  const _priceLabel = (() => {
     const min = product.priceRange.minVariantPrice;
     const max = product.priceRange.maxVariantPrice;
     if (min.amount === max.amount) return formatPrice(min);
     return `${formatPrice(min)} – ${formatPrice(max)}`;
   })();
 
+  const requiredPacks = bundleState?.bundle.packs ?? 0;
+
   const goToVariantStep = () => {
     if (!bundleState) return;
-    const packs = bundleState.bundle.packs;
 
-    setVariantQuantities((prev) => {
-      if (variants.length === 0) return prev;
-
-      return variants.map((v, index) => ({
+    // ✅ Reset all variant quantities when entering the flavors step
+    setVariantQuantities(
+      variants.map((v) => ({
         variantId: v.id,
-        quantity: index === 0 ? packs : 0,
-      }));
-    });
+        quantity: 0,
+      }))
+    );
 
     setStep("variants");
     onStepChange?.("variants");
@@ -150,6 +214,7 @@ export function ProductConfigurator({
           : entry
       )
     );
+    setCheckoutError(null);
   };
 
   const unlockedGiftCount = totalPacks;
@@ -162,10 +227,20 @@ export function ProductConfigurator({
   );
 
   const handleCheckout = async () => {
-    if (totalPacks === 0) return;
+    if (totalPacks === 0) {
+      setCheckoutError("Please select at least one flavor.");
+      return;
+    }
 
-    // 🎯 PIXEL TRACKING: This calls the parent handler, which now executes
-    // BOTH the AddToCart and InitiateCheckout events, as requested.
+    if (requiredPacks > 0 && totalPacks < requiredPacks) {
+      setCheckoutError(
+        `Please select at least ${requiredPacks} pack${
+          requiredPacks > 1 ? "s" : ""
+        } to checkout.`
+      );
+      return;
+    }
+
     onInitiateCheckout();
 
     setIsCheckingOut(true);
@@ -202,7 +277,6 @@ export function ProductConfigurator({
         throw new Error("No checkout URL returned");
       }
 
-      // ✅ Redirect to Shopify checkout (This is the final action)
       window.location.href = data.url;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
@@ -226,8 +300,8 @@ export function ProductConfigurator({
               }}
               className="flex items-center gap-1 text-[11px] font-semibold uppercase tracking-wide hover:text-gray-200"
             >
-              <span className="w-8 h-8 flex items-center justify-center rounded-full bg-white">
-                <BiArrowBack className="w-4 h-4 text-black" />
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white">
+                <BiArrowBack className="h-4 w-4 text-black" />
               </span>
               <span>Back to bundles</span>
             </button>
@@ -237,38 +311,35 @@ export function ProductConfigurator({
           </div>
         )}
 
-        {/* STEP 1: BUNDLE (full product info on right side) */}
+        {/* STEP 1: BUNDLE */}
         {step === "bundle" && (
           <div className="space-y-6">
-            {/* Product title + description ONLY in this step */}
             <div className="space-y-2">
               <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
                 {product.title}
               </h1>
-              <div className="prose max-w-none text-black text-base md:text-xl">
+              <div className="prose max-w-none text-base text-black md:text-xl">
                 <p>{product.description}</p>
               </div>
               <BenefitsBlock />
             </div>
 
-            {/* Bundle selector */}
             <BundleSelector
               onChange={(value) => {
                 setBundleState(value);
               }}
             />
 
-            <hr className="text-gray-200 m-3" />
+            <hr className="m-3 text-gray-200" />
 
-            {/* CTA to go to flavor step */}
             <button
               type="button"
               onClick={goToVariantStep}
               disabled={!bundleState}
-              className="w-full flex items-center justify-center gap-2 rounded-full bg-[#32999E] px-4 py-3 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:bg-gray-400"
+              className="flex w-full items-center justify-center gap-2 rounded-full bg-[#32999E] px-4 py-3 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:bg-gray-400"
             >
               Select a flavor
-              <BsArrowRight className="w-4 h-4 text-white" />
+              <BsArrowRight className="h-4 w-4 text-white" />
             </button>
 
             <ProductTabs />
@@ -276,10 +347,9 @@ export function ProductConfigurator({
           </div>
         )}
 
-        {/* STEP 2: VARIANTS (no product title/price/description) */}
+        {/* STEP 2: VARIANTS */}
         {step === "variants" && (
           <div className="space-y-8">
-            {/* Summary of total packs */}
             <div className="rounded-lg bg-gray-50 px-4 py-3 text-xs text-black">
               <div className="flex items-center justify-between">
                 <span className="font-semibold uppercase tracking-wide">
@@ -291,17 +361,21 @@ export function ProductConfigurator({
               </div>
               {bundleState && (
                 <p className="mt-1 text-xs text-black">
-                  You started with{" "}
+                  You chose a{" "}
                   <span className="font-semibold uppercase">
+                    {bundleState.bundle.packs}-pack
+                  </span>{" "}
+                  bundle. Select at least{" "}
+                  <span className="font-semibold">
                     {bundleState.bundle.packs} pack
                     {bundleState.bundle.packs !== 1 ? "s" : ""}
                   </span>{" "}
-                  — adjust the count per flavor below.
+                  across your favorite flavors to checkout.
                 </p>
               )}
             </div>
 
-            {/* Variant cards */}
+            {/* Variants */}
             <div className="space-y-4">
               {variants.map((variant, index) => {
                 const entry =
@@ -322,14 +396,12 @@ export function ProductConfigurator({
                     key={variant.id}
                     className="relative flex items-stretch justify-between rounded-xl border border-gray-200 bg-white"
                   >
-                    {/* Vertical “Best seller” badge ONLY on first card */}
                     {index === 0 && (
-                      <div className="pointer-events-none absolute left-0 md:-left-2 top-1/2 -translate-y-1/2 -translate-x-1/2 -rotate-90 origin-center bg-red-600 px-2 py-1 text-[8px] font-semibold uppercase tracking-wide text-white">
+                      <div className="pointer-events-none absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 origin-center -rotate-90 bg-red-600 px-2 py-1 text-[8px] font-semibold uppercase tracking-wide text-white md:-left-2">
                         Best seller
                       </div>
                     )}
 
-                    {/* LEFT HALF: image + name */}
                     <div className="flex flex-1 items-center gap-3">
                       <div className="h-18 w-18 overflow-hidden rounded-lg">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -350,13 +422,12 @@ export function ProductConfigurator({
                       </div>
                     </div>
 
-                    {/* RIGHT HALF: Add + / quantity selector */}
                     <div className="flex items-center p-3">
                       {!hasQuantity ? (
                         <button
                           type="button"
                           onClick={() => handleQuantityChange(variant.id, 1)}
-                          className="bg-[#2e4c3c] rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white transition hover:bg-[#2D5B5D] hover:text-white"
+                          className="rounded-full bg-[#2e4c3c] px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white transition hover:bg-[#2D5B5D]"
                         >
                           Add +
                         </button>
@@ -365,7 +436,7 @@ export function ProductConfigurator({
                           <button
                             type="button"
                             onClick={() => handleQuantityChange(variant.id, -1)}
-                            className="bg-[#2e4c3c] flex h-8 w-8 items-center justify-center rounded-full text-white text-sm font-semibold hover:bg-[#2D5B5D]"
+                            className="flex h-8 w-8 items-center justify-center rounded-full bg-[#2e4c3c] text-sm font-semibold text-white hover:bg-[#2D5B5D]"
                           >
                             -
                           </button>
@@ -375,7 +446,7 @@ export function ProductConfigurator({
                           <button
                             type="button"
                             onClick={() => handleQuantityChange(variant.id, 1)}
-                            className="bg-[#2e4c3c] flex h-8 w-8 items-center justify-center rounded-full text-white text-sm font-semibold hover:bg-[#2D5B5D]"
+                            className="flex h-8 w-8 items-center justify-center rounded-full bg-[#2e4c3c] text-sm font-semibold text-white hover:bg-[#2D5B5D]"
                           >
                             +
                           </button>
@@ -387,12 +458,12 @@ export function ProductConfigurator({
               })}
             </div>
 
-            {/* Gifts based on total packs */}
+            {/* Gifts */}
             <div className="space-y-3">
               <h2 className="text-sm font-semibold uppercase tracking-wide text-black">
                 Your free gifts
               </h2>
-              <p className="text-xs text-black mb-6">
+              <p className="mb-6 text-xs text-black">
                 Based on{" "}
                 <span className="font-semibold uppercase">
                   {totalPacks} pack{totalPacks !== 1 ? "s" : ""}
@@ -410,9 +481,8 @@ export function ProductConfigurator({
                       className="flex flex-col items-center space-y-2 text-center"
                     >
                       <div className="relative w-full">
-                        {/* Badge: Free + old price crossed */}
                         {gift.badgeLabel && (
-                          <div className="pointer-events-none absolute -top-2 left-1/2 -translate-x-1/2 inline-flex items-center justify-center rounded-md bg-[#FBE8BB] px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-black whitespace-nowrap">
+                          <div className="pointer-events-none absolute -top-2 left-1/2 inline-flex -translate-x-1/2 items-center justify-center whitespace-nowrap rounded-md bg-[#FBE8BB] px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-black">
                             <span className="mr-1">Free</span>
                             <span className="line-through opacity-80">
                               {gift.badgeLabel}
@@ -430,7 +500,7 @@ export function ProductConfigurator({
                         >
                           {!isUnlocked && (
                             <div className="absolute inset-0 z-10 flex flex-col items-center justify-center">
-                              <FaLock className="text-black w-4 h-4" />
+                              <FaLock className="h-4 w-4 text-black" />
                               <span className="mt-1 text-[10px] font-medium uppercase tracking-wide text-black">
                                 {gift.unlockAtPacks}+ Packs
                               </span>
@@ -465,29 +535,27 @@ export function ProductConfigurator({
               </div>
             </div>
 
-            {/* Checkout button */}
             {checkoutError && (
               <p className="mt-2 text-xs text-red-600">{checkoutError}</p>
             )}
-
-            <button
-              type="button"
-              onClick={handleCheckout}
-              className="flex items-center justify-center gap-2 mt-2 w-full rounded-full bg-[#32999E] px-4 py-4 text-sm font-semibold text-white transition hover:bg-[#2D5B5D] disabled:bg-gray-400 disabled:cursor-not-allowed"
-              disabled={totalPacks === 0 || isCheckingOut}
-            >
-              {isCheckingOut
-                ? "Redirecting to checkout..."
-                : "Continue to checkout"}
-              <IoBagCheckOutline className="w-4 h-4 text-white" />
-            </button>
           </div>
         )}
       </div>
 
-      {/* 🔥 Sticky bar at bottom of viewport, only in bundle step */}
+      <div className="h-24 md:h-28" />
+
+      {/* Sticky bars */}
       {step === "bundle" && (
         <StickyFlavorBar canProceed={!!bundleState} onClick={goToVariantStep} />
+      )}
+
+      {step === "variants" && bundleState && (
+        <StickyCheckoutBar
+          requiredPacks={requiredPacks}
+          totalPacks={totalPacks}
+          isCheckingOut={isCheckingOut}
+          onCheckout={handleCheckout}
+        />
       )}
     </>
   );

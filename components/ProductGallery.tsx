@@ -92,7 +92,7 @@ export function ProductGallery({
     <div className="flex flex-col gap-2 md:gap-4 md:flex-row md:items-start">
       {/* Desktop thumbs: vertical on the LEFT */}
       <div className="hidden md:block md:w-24">
-        <div className="overflow-hidden lg:max-h-[512px] max-h-[300px]" ref={thumbsDesktopRef}>
+        <div className="overflow-hidden lg:max-h-[450px] max-h-[300px]" ref={thumbsDesktopRef}>
           <div className="flex flex-col gap-2">
             {thumbsImages.map((image, index) => {
               const isActive = index === selectedIndex;
