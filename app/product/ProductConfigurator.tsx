@@ -349,7 +349,7 @@ export function ProductConfigurator({
 
         {/* STEP 2: VARIANTS */}
         {step === "variants" && (
-          <div className="space-y-8">
+          <div className="space-y-4">
             <div className="hidden md:block rounded-lg bg-gray-50 px-4 py-3 text-xs text-black">
               <div className="flex items-center justify-between">
                 <span className="font-semibold uppercase tracking-wide">
@@ -376,7 +376,7 @@ export function ProductConfigurator({
             </div>
 
             {/* Variants */}
-            <div className="space-y-4">
+            <div className="space-y-2">
               {variants.map((variant, index) => {
                 const entry =
                   variantQuantities.find((v) => v.variantId === variant.id) ??
@@ -460,15 +460,9 @@ export function ProductConfigurator({
 
             {/* Gifts */}
             <div className="space-y-3">
-              <h2 className="text-sm font-semibold uppercase tracking-wide text-black">
-                Your free gifts
-              </h2>
-              <p className="mb-6 text-xs text-black">
-                Based on{" "}
-                <span className="font-semibold uppercase">
-                  {totalPacks} pack{totalPacks !== 1 ? "s" : ""}
-                </span>
-                , you unlock:
+              <p className="mb-4 text-[10px] text-black text-center">
+                <span className="font-bold">Exclusive Holiday Sale!</span>
+                FREE Gifts With Your First Order
               </p>
 
               <div className="grid grid-cols-4 gap-2 md:gap-4">
@@ -512,7 +506,7 @@ export function ProductConfigurator({
                             src={gift.imageUrl}
                             alt={gift.name}
                             className={
-                              "h-full w-full object-cover " +
+                              "p-1 rounded-xl h-full w-full object-cover " +
                               (!isUnlocked ? "opacity-0" : "")
                             }
                           />
