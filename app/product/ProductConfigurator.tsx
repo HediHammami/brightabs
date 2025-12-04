@@ -315,7 +315,7 @@ export function ProductConfigurator({
         {step === "bundle" && (
           <div className="space-y-6">
             <div className="space-y-2">
-              <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
+              <h1 className="mt-4 md:mt-0 text-2xl md:text-3xl font-bold tracking-tight">
                 {product.title}
               </h1>
               <div className="prose max-w-none text-base text-black md:text-xl">
