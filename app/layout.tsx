@@ -5,6 +5,7 @@ import "./globals.css";
 import Announcement from "@/components/Announcement";
 import Header from "@/components/Header";
 import Script from "next/script";
+import { GoogleAnalytics } from "@next/third-parties/google";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -70,37 +71,43 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
   return (
     <html
       lang="en"
       suppressHydrationWarning
       className={`${poppins.variable} ${rubik.variable}`}
     >
-      <head>
-        <Script
-          id="fb-pixel-base"
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{ __html: facebookPixelBaseCode }}
-        />
-
-        {/* Noscript fallback */}
-        {PIXEL_ID && (
-          <noscript>
-            <img
-              height="1"
-              width="1"
-              style={{ display: "none" }}
-              src={`https://www.facebook.com/tr?id=${PIXEL_ID}&ev=PageView&noscript=1`}
-              alt="Facebook Pixel Fallback"
-            />
-          </noscript>
-        )}
-      </head>
       <body className="antialiased">
         <Announcement />
         <Header />
         <main>{children}</main>
       </body>
+
+      {/* --- Place Scripts Here --- */}
+
+      {/* 1. Facebook Pixel Script */}
+      <Script
+        id="fb-pixel-base"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{ __html: facebookPixelBaseCode }}
+      />
+
+      {/* 2. Facebook Pixel Noscript Fallback */}
+      {PIXEL_ID && (
+        <noscript>
+          <img
+            height="1"
+            width="1"
+            style={{ display: "none" }}
+            src={`https://www.facebook.com/tr?id=${PIXEL_ID}&ev=PageView&noscript=1`}
+            alt="Facebook Pixel Fallback"
+          />
+        </noscript>
+      )}
+
+      {/* 3. Google Analytics */}
+      {gaId && <GoogleAnalytics gaId={gaId} />}
     </html>
   );
 }
