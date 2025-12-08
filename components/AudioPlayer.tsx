@@ -48,8 +48,7 @@ export default function AudioPlayer(): JSX.Element {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   // *** IMPORTANT: REPLACE THIS URL with the actual path to your MP3 file ***
-  const audioSrc =
-    "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3";
+  const audioSrc = "/audio/2.mp3";
 
   // Set up event listeners for the audio element
   useEffect(() => {
@@ -89,7 +88,7 @@ export default function AudioPlayer(): JSX.Element {
   return (
     <div className="hidden py-6 md:flex justify-center items-center">
       {/* The main audio player container */}
-      <div className="relative flex items-center p-4 w-full rounded-2xl border-2 border-[#002325] bg-[#F1FEFF]">
+      <div className="relative flex items-center p-4 w-full rounded-2xl border-1 border-[#002325] bg-[#F1FEFF]">
         {/* Play/Mic Button */}
         <button
           onClick={handleTogglePlay}
@@ -119,7 +118,7 @@ export default function AudioPlayer(): JSX.Element {
 
         {/* Avatar/Image */}
         <Image
-          src="/images/doctor.png"
+          src="/images/vocal_user.png"
           alt="User avatar"
           className="w-12 h-12 rounded-full ml-4 shrink-0 object-cover"
           width={120}

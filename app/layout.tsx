@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   title:
     "BRIGHTABS – Remineralizing Toothpaste Tablets | Natural Enamel Restoration",
   description:
-    "BRIGHTABS remineralizing toothpaste tablets restore enamel & clean teeth with natural, dentist-trusted ingredients. Support gum health & strengthen enamel naturally.",
+    "BRIGHTABS remineralizing toothpaste tablets restore enamel & clean teeth with natural, dentist-trusted ingredients.",
   keywords:
     "remineralizing toothpaste, enamel restoration, natural toothpaste tablets, gum health, dentist-approved",
   openGraph: {
@@ -35,8 +35,8 @@ export const metadata: Metadata = {
     images: [
       {
         url: "/images/brightaps.webp",
-        width: 1200,
-        height: 630,
+        width: 480,
+        height: 480,
         alt: "BRIGHTABS Remineralizing Toothpaste Tablets",
       },
     ],
@@ -50,9 +50,9 @@ export const metadata: Metadata = {
   },
 };
 
-const PIXEL_ID: string | undefined = process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID;
+const PIXEL_ID = process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID;
 
-const facebookPixelBaseCode: string = `
+const facebookPixelBaseCode = `
   !function(f,b,e,v,n,t,s)
   {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
   n.callMethod.apply(n,arguments):n.queue.push(arguments)};
@@ -61,53 +61,69 @@ const facebookPixelBaseCode: string = `
   t.src=v;s=b.getElementsByTagName(e)[0];
   s.parentNode.insertBefore(t,s)}(window, document,'script',
   'https://connect.facebook.net/en_US/fbevents.js');
-
+  
   fbq('init', '${PIXEL_ID}');
-  fbq('track', 'PageView'); 
+  fbq('track', 'PageView');
 `;
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+
   return (
     <html
       lang="en"
       suppressHydrationWarning
       className={`${poppins.variable} ${rubik.variable}`}
     >
+      <head>
+        {/* Facebook Pixel NOSCRIPT FIX — allowed ONLY inside <head> */}
+        {PIXEL_ID && (
+          <noscript>
+            <img
+              height="1"
+              width="1"
+              style={{ display: "none" }}
+              src={`https://www.facebook.com/tr?id=${PIXEL_ID}&ev=PageView&noscript=1`}
+              alt="Facebook Pixel Fallback"
+            />
+          </noscript>
+        )}
+      </head>
+
       <body className="antialiased">
         <Announcement />
         <Header />
         <main>{children}</main>
+
+        {/* Facebook Pixel script */}
+        <Script
+          id="fb-pixel-base"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{ __html: facebookPixelBaseCode }}
+        />
+
+        {/* Google Analytics */}
+        {gaId && <GoogleAnalytics gaId={gaId} />}
+
+        {/* Microsoft Clarity */}
+        <Script
+          id="microsoft-clarity"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+      (function(c,l,a,r,i,t,y){
+          c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+          t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/" + i;
+          y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+      })(window, document, "clarity", "script", "${process.env.NEXT_PUBLIC_CLARITY_ID}");
+    `,
+          }}
+        />
       </body>
-
-      {/* --- Place Scripts Here --- */}
-
-      {/* 1. Facebook Pixel Script */}
-      <Script
-        id="fb-pixel-base"
-        strategy="afterInteractive"
-        dangerouslySetInnerHTML={{ __html: facebookPixelBaseCode }}
-      />
-
-      {/* 2. Facebook Pixel Noscript Fallback */}
-      {PIXEL_ID && (
-        <noscript>
-          <img
-            height="1"
-            width="1"
-            style={{ display: "none" }}
-            src={`https://www.facebook.com/tr?id=${PIXEL_ID}&ev=PageView&noscript=1`}
-            alt="Facebook Pixel Fallback"
-          />
-        </noscript>
-      )}
-
-      {/* 3. Google Analytics */}
-      {gaId && <GoogleAnalytics gaId={gaId} />}
     </html>
   );
 }
