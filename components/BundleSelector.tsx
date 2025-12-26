@@ -78,8 +78,8 @@ export const GIFT_OPTIONS: GiftOption[] = [
   },
   {
     id: "gift-2",
-    name: "3 Grease Cleaner Tablets",
-    imageUrl: "/images/gifts/revolubar.webp",
+    name: "5 Dental floss",
+    imageUrl: "/images/gifts/dental-floss.png",
     unlockAtPacks: 2,
     badgeLabel: "$12.00",
     variantId: "gid://shopify/ProductVariant/42774144450673",
